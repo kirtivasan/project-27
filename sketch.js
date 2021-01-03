@@ -1,105 +1,82 @@
+const Engine = Matter.Engine;
+const World= Matter.World;
+const Bodies = Matter.Bodies;
+const Constraint = Matter.Constraint;
 
-var monkey , monkey_running
-var banana ,bananaImage, bGroup, obstacle, obstacleImage, oGroup;
-var FoodGroup, obstacleGroup;
-var Banana_score;
-var ground;
-var PLAY=1,END=0,gamestate=1;
+var engine, world;
+var box1, pig1;
+var backgroundImg,platform;
+var bird, slingShot;
 
-function preload(){
-  
-  
-  monkey_running = loadAnimation("sprite_0.png",
-                                 "sprite_1.png",
-                                 "sprite_2.png",
-                                 "sprite_3.png",
-      "sprite_4.png",
-    "sprite_5.png",
-   "sprite_6.png",
- "sprite_7.png",
-"sprite_8.png")
-  
-  bananaImage = loadImage("banana.png");
-  obstacleImage = loadImage("obstacle.png");
- 
+function preload() {
+    backgroundImg = loadImage("sprites/bg.png");
+}
+
+function setup(){
+    var canvas = createCanvas(1200,400);
+    engine = Engine.create();
+    world = engine.world;
+
+
+    ground = new Ground(600,height,1200,20);
+    platform = new Ground(150, 305, 300, 170);
+
+    box1 = new Box(700,320,70,70);
+    box2 = new Box(920,320,70,70);
+    pig1 = new Pig(810, 350);
+    log1 = new Log(810,260,300, PI/2);
+
+    box3 = new Box(700,240,70,70);
+    box4 = new Box(920,240,70,70);
+    pig3 = new Pig(810, 220);
+
+    log3 =  new Log(810,180,300, PI/2);
+
+    box5 = new Box(810,160,70,70);
+    log4 = new Log(760,120,150, PI/7);
+    log5 = new Log(870,120,150, -PI/7);
+
+    bird = new Bird(200,50);
+
+    //log6 = new Log(230,180,80, PI/2);
+    slingshot = new SlingShot(bird.body,{x:200, y:50});
+}
+
+function draw(){
+    background(backgroundImg);
+    Engine.update(engine);
+    //strokeWeight(4);
+    box1.display();
+    box2.display();
+    ground.display();
+    pig1.display();
+    log1.display();
+
+    box3.display();
+    box4.display();
+    pig3.display();
+    log3.display();
+
+    box5.display();
+    log4.display();
+    log5.display();
+
+    bird.display();
+    platform.display();
+    //log6.display();
+    slingshot.display();    
+}
+
+function mouseDragged(){
+    Matter.Body.setPosition(bird.body, {x: mouseX , y: mouseY});
 }
 
 
-
-function setup() {
-  
- createCanvas(460,460);
-  monkey=createSprite(70,400,20,20);
-  monkey.addAnimation("running",monkey_running);
-  monkey.scale=0.1;
-  
-  ground=createSprite(230,435,500,10);
-
-   Banana_score=0;
-    
-  bGroup = new Group();
-  oGroup = new Group();
+function mouseReleased(){
+    slingshot.fly();
 }
-
-
-function draw() {
- background("white");
-  
-  if (gamestate===PLAY){
-  if(keyDown("space")&& monkey.y>399){
-    monkey.velocityY=-23;
-  }
-  
-  if(monkey.isTouching(oGroup)){
-     gamestate=END;
-     }
-
-  monkey.velocityY=monkey.velocityY+1;
-  
-  Banana();  
-  Obstacles();
-}else{
-    Death();
+function keyPressed(){
+    if(keyCode===32){
+    slingshot.attach(bird.body);
+    }
 }
-  drawSprites();
-  monkey.collide(ground);
-  monkey.collide(ground);
-  BananaScore();
-}
-
-function Banana(){
-  if(frameCount%100===0){
-      banana=createSprite(450,Math.round(random(170,250)),20,20);
-      banana.velocityX=-3;
-      banana.addImage(bananaImage);
-      banana.lifetime=150;
-      banana.scale=0.1;
-      bGroup.add(banana);
-     }
-}
-function Obstacles(){
-   if(frameCount%200===0){
-      obstacles=createSprite(Math.round(random(400,470)),410,40,40);
-      obstacles.velocityX=-3;
-      obstacles.addImage(obstacleImage);
-      obstacles.lifetime=150;
-      obstacles.scale=0.15;
-      oGroup.add(obstacles);
-      }
-}
-function BananaScore(){
-  text("Score: "+ Banana_score, 230,50);
-  if(monkey.isTouching(bGroup)){
-      Banana_score=Banana_score+1;
-      bGroup.destroyEach();
-     }
-}
-function Death(){
-    oGroup.setVelocityXEach(0);
-    bGroup.setVelocityXEach(0);
-    oGroup.setLifetimeEach(0);
-    bGroup.setLifetimeEach(0);
-    Banana_score=0;
-  
-}
-
