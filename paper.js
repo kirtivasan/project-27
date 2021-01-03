@@ -10,6 +10,7 @@ class paper
 
 			
 			}
+
 		this.x=x;
 		this.y=y;
 		this.r=r

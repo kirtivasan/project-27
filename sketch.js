@@ -4,13 +4,21 @@ const World = Matter.World;
 const Bodies = Matter.Bodies;
 const Body = Matter.Body;
 const Render = Matter.Render;
-var dustbinObj, paperObject,groundObject	
+var dustbinObj, paperObject,groundObject;	
 var world;
+var binIMG;
+var paperIMG;
 
+function preload(){
 
+	binIMG=loadImage("dustbingreen.png");
+	paperIMG=loadImage("paper.png");
+}
 function setup() {
 	createCanvas(1600, 700);
 	rectMode(CENTER);
+
+	
 
 
 	engine = Engine.create();
